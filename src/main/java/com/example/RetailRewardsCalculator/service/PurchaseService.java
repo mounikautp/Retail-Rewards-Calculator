@@ -5,6 +5,7 @@ import com.example.RetailRewardsCalculator.repository.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,5 +25,9 @@ public class PurchaseService {
 
     public Optional<Purchase>  retrieveById(Integer purchaseId){
         return this.purchaseRepository.findById(purchaseId);
+    }
+
+    public List<Purchase>  retrievePurchases(Integer customerId, Date date, Double minValue){
+        return this.purchaseRepository.findAllPurchases(customerId,date,minValue);
     }
 }

@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
 
@@ -20,7 +20,9 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotEmpty
+    private Integer customerId;
+
+    @NotBlank
     private String customerName;
 
     @Min(value = 1)
