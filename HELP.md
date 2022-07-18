@@ -10,3 +10,6 @@
      }
      ```
 - Calculate Rewards End point: **[End Point](http://localhost:8080/customers/1/rewards)**
+# Docker 
+ - build using ``` docker build -t mounika/rewards-calculator  .```
+ - run using ``` docker run mounika/rewards-calculator```
