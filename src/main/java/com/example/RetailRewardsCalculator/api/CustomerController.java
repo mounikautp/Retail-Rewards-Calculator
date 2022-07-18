@@ -16,7 +16,7 @@ public class CustomerController {
 
     CustomerService customerService;
 
-    @GetMapping("/{customerId}")
+    @GetMapping("/{customerId}/rewards")
     public Rewards getRewards(@PathVariable("customerId") Integer customerId) throws Exception {
 
         return this.customerService.calculateRewards(customerId);
