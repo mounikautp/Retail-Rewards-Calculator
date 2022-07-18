@@ -17,18 +17,23 @@ public class CustomerService {
     @Autowired
     PurchaseService purchaseService;
 
-    public Rewards calculateRewards(Integer customerId) {
-        LocalDate searchDate = LocalDate.now().minus(90, ChronoUnit.DAYS);
-        Date searchStartDate = Date.from(searchDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    public Rewards calculateRewards(Integer customerId) throws Exception {
+
+        Date searchStartDate = getDateOlderThan(LocalDate.now(), 90, ChronoUnit.DAYS);
         List<Purchase> purchaseList = purchaseService.retrievePurchases(customerId, searchStartDate, MIN_TRANS_VALUE);
-        int rewardPoints = purchaseList.stream().mapToInt(purchase-> calculateRewardPoints(purchase)).sum();
-        return  Rewards.builder().customerId(customerId).purchaseList(purchaseList).rewardPoints(rewardPoints).build();
+        if(purchaseList.isEmpty()){
+            throw new Exception("No Purchases for the customer:"+ customerId + " with the valid purchases");
+        }
+        int rewardPoints = purchaseList.stream().mapToInt(purchase -> calculateRewardPoints(purchase)).sum();
+        return buildRewards(customerId, purchaseList, rewardPoints);
     }
 
     private int calculateRewardPoints(Purchase purchase) {
-        if (purchase == null || purchase.getSpendValue() < MIN_TRANS_VALUE) return 0;
+        if (purchase == null) return 0;
 
         double spendValue = purchase.getSpendValue();
+
+        if (spendValue < MIN_TRANS_VALUE) return 0;
 
         int rewardPoints = 0;
 
@@ -36,9 +41,21 @@ public class CustomerService {
             rewardPoints = (int) (spendValue - 100) * 2;
             spendValue = spendValue - rewardPoints / 2;
         }
-        rewardPoints =rewardPoints +  (int)Math.min((spendValue - 50), 0) * 1;
+
+        if (spendValue > 50) {
+            rewardPoints = rewardPoints + (int) (spendValue-50);
+        }
 
         return rewardPoints;
 
+    }
+
+    private Date getDateOlderThan(LocalDate startDate, int value, ChronoUnit unit) {
+        LocalDate searchDate = startDate.minus(value, unit);
+        return Date.from(searchDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    private Rewards buildRewards(int customerId, List<Purchase> purchaseList, int rewardPoints) {
+        return Rewards.builder().customerId(customerId).purchaseList(purchaseList).rewardPoints(rewardPoints).build();
     }
 }

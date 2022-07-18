@@ -4,10 +4,9 @@ import com.example.RetailRewardsCalculator.domain.Rewards;
 import com.example.RetailRewardsCalculator.service.CustomerService;
 import com.example.RetailRewardsCalculator.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/customers")
@@ -18,8 +17,13 @@ public class CustomerController {
     CustomerService customerService;
 
     @GetMapping("/{customerId}")
-    public Rewards  getRewards(@PathVariable("customerId") Integer customerId){
+    public Rewards getRewards(@PathVariable("customerId") Integer customerId) throws Exception {
 
         return this.customerService.calculateRewards(customerId);
+    }
+
+    @ExceptionHandler(value=Exception.class)
+    public ResponseEntity<String> handleException(Exception exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
