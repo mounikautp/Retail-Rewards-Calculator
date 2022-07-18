@@ -1,5 +1,5 @@
 # Read Me First
-- Save Purcheses: **[End Point](http://localhost:8080/purchases)**
+- Save Purcheses  With POST method: **[End Point](http://localhost:8080/purchases)**
   - payload is: 
     ```  json  
      {  
